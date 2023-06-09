@@ -1,0 +1,5 @@
+*.html
+/static
+static/
+*.css
+__pycache__/
