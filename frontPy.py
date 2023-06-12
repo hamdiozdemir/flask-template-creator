@@ -118,6 +118,7 @@ margin: 0;
     def start_section(
             self,
             id="",
+            class_name=None,
             height="100vh",
             width="100%",
             background_color="white",
@@ -148,14 +149,15 @@ margin: 0;
             if not arg.endswith(('px', '%', 'vh', 'vw')):
                 raise ValueError(f"{arg} argument must be a number and ends with 'px', '%', 'vh', 'vw', 'rem' " )
 
-        attr_name = self.attr_name_generator()
+        if not class_name:
+            class_name = self.attr_name_generator()
 
-        self.section = f"""
-        <section class="{attr_name}" id="{id}">
+        self.html_content += f"""
+        <section class="{class_name}" id="{id}">
         """
 
         self.css_content += f"""      
-.{attr_name}{{
+.{class_name}{{
 background: {background_color};
 height: {height};
 width: {width};
@@ -167,6 +169,8 @@ align-items: {column_position};
 justify-content: {row_position};
 font-size: {font_size};
 padding: {padding};
+border: {border_width} {border_type} {border_color};
+border-radius: {border_radius};
 
 }}
         """
@@ -174,15 +178,76 @@ padding: {padding};
     def end_section(self):
         """Ends the section."""
 
-        self.section += """
+        self.html_content += """
         </section>
         """
-        self.html_content += self.section
-        self.section = ""
-        return self.section
+        return self.html_content
         
         
+    def start_div(
+            self,
+            id="",
+            class_name=None,
+            width="100%",
+            height="auto",
+            background_color="white",
+            row_position="center",
+            column_position="center",
+            font_size="1rem",
+            flex_wrap="nowrap",
+            direction="row",
+            gap="10px",
+            padding="10px",
+            border_width="0px",
+            border_color="None",
+            border_type="",
+            border_radius="0px",
+            ):
+        """Starts a div element."""
 
+        position_check_list = ["center", "baseline", "end", "flex-end", "flex-start", "left", "right", "space-around", "space-between"]
 
+        if row_position not in position_check_list or \
+            column_position not in position_check_list:
+            raise ValueError(f'Invalid value for position. You can only use {", ".join(position_check_list)} ')
 
+        if not class_name:
+            class_name = self.attr_name_generator()
+
+        self.html_content += f"""
+        <div class="{class_name}" id="{id}">
+        """
+
+        self.css_content += f"""      
+.{class_name}{{
+background: {background_color};
+height: {height};
+width: {width};
+display: flex;
+flex-direction: {direction};
+flex-wrap: {flex_wrap};
+gap: {gap};
+align-items: {column_position};
+justify-content: {row_position};
+font-size: {font_size};
+padding: {padding};
+border: {border_width} {border_type} {border_color};
+border-radius: {border_radius};
+
+}}
+        """
+
+    def end_div(self):
+        """Ends the div element."""
+
+        self.html_content += """
+        </div>
+        """
+        return self.html_content
+    
+    def add_text(self, text):
+        """Add text to html content"""
+
+        self.html_content += text
+        return self.html_content
 
